@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Конфигурации vlv.one</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+        }
+    </style>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+</head>
+<body>
+<header class="container overflow-hidden text-center mt-2 mb-3">
+    <h1>Конфигурации vlv.one</h1>
+</header>
+<main class="container mb-5">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-secondary" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-success" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-danger" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-warning" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-info" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-dark" style="width: 6rem; height: 6rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</main>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="copyToast" class="toast align-items-center text-bg-primary border-0"
+         role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Ссылка скопирована в буфер обмена!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    <div id="errorToast" class="toast align-items-center text-bg-danger border-0"
+         role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Не удалось скопировать ссылку.
+                <br>Gопробуйте скопировать вручную.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<script>
+    window.TW = {};
+
+    TW.VelvetVpnConfigLoader = {
+        url: 'https://vlv.one/5pbcihd5z9',
+        encodedData: null,
+        decodedData: null,
+        container: null,
+        copyToast: null,
+        errorToast: null,
+        counter: 0,
+        init() {
+            this.container = document.querySelector('body > main');
+            this.copyToast = document.getElementById('copyToast');
+            this.errorToast = document.getElementById('errorToast');
+
+            fetch(this.url, {
+                method: "GET",
+                headers: {
+                    "User-Agent": "PostmanRuntime/7.41.0",
+                },
+            }).then((data) => {
+                data.text().then((text) => {
+                    this.decodedData = text;
+                    this.decodedData = atob(text);
+
+                    this.renderConfigs();
+                })
+            }).catch((data) => {
+                console.error(data)
+            });
+        },
+        renderConfigs() {
+            this.counter = 0;
+            this.container.innerHTML = '';
+
+            this.decodedData.split("\n").forEach((row) => {
+                row = row.trim();
+                const url = new URL(row);
+                const name = decodeURIComponent(url.hash.substring(1));
+
+                this.container.append(this.createConfigSectionElement(name, row));
+            })
+        },
+        createConfigSectionElement(name, text) {
+            this.counter++;
+
+            const sectionEl = document.createElement('section');
+            sectionEl.className = 'row mb-5';
+
+            // header
+            const headerEl = document.createElement('header');
+            headerEl.className = 'col-12 mb-2';
+
+            const headerRowEl = document.createElement('div');
+            headerRowEl.className = 'row justify-content-between';
+
+            const headerTitleEl = document.createElement('h4');
+            headerTitleEl.className = 'col-auto';
+            headerTitleEl.innerText = `Конфигурация ${name}`;
+
+            const headerBtnColEl = document.createElement('div');
+            headerBtnColEl.className = 'col-auto';
+
+            const headerBtnEl = document.createElement('button');
+            headerBtnEl.className = 'btn btn-sm btn-primary  w-100';
+            headerBtnEl.setAttribute('data-clipboard-target', `#config-${this.counter}`);
+            headerBtnEl.innerText = 'Скопировать';
+
+            const clipboard = new ClipboardJS(headerBtnEl);
+            clipboard.on('success', function(e) {
+                const toast = bootstrap.Toast.getOrCreateInstance(this.copyToast);
+                toast.show();
+
+                e.clearSelection();
+            });
+
+            clipboard.on('error', function(e) {
+                const toast = bootstrap.Toast.getOrCreateInstance(this.errorToast);
+                toast.show();
+            });
+
+            headerBtnColEl.append(headerBtnEl);
+            headerRowEl.append(headerTitleEl);
+            headerRowEl.append(headerBtnColEl);
+            headerEl.append(headerRowEl);
+            sectionEl.append(headerEl);
+            // END header
+
+            // main
+            const mainEl = document.createElement('main');
+            mainEl.className = 'col-12';
+
+            const mainTextareaEl = document.createElement('textarea');
+            mainTextareaEl.className = 'form-control';
+            mainTextareaEl.id = `config-${this.counter}`;
+            mainTextareaEl.setAttribute('rows', '4');
+            mainTextareaEl.onfocus = () => mainTextareaEl.select();
+            mainTextareaEl.value = text;
+
+            mainEl.append(mainTextareaEl);
+            sectionEl.append(mainEl);
+            // END main
+
+            return sectionEl;
+        },
+    };
+    document.addEventListener('DOMContentLoaded', () => {
+        TW.VelvetVpnConfigLoader.init();
+    });
+</script>
+<script src="/bootstrap.bundle.min.js"></script>
+<script src="/clipboard.min.js"></script>
+</body>
+</html>
