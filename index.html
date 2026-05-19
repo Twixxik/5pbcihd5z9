@@ -86,7 +86,7 @@
             this.copyToast = document.getElementById('copyToast');
             this.errorToast = document.getElementById('errorToast');
 
-            fetch(this.url, {
+            fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
                 method: "GET",
                 headers: {
                     "User-Agent": "PostmanRuntime/7.41.0",
