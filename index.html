@@ -92,14 +92,14 @@
                 headers: {
                     "User-Agent": "PostmanRuntime/7.41.0",
                 },
-            }).then(onSuccess).catch((data) => {
+            }).then(this.onSuccess).catch((data) => {
                 console.error(data);
                 fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
                     method: "GET",
                     headers: {
                         "User-Agent": "PostmanRuntime/7.41.0",
                     },
-                }).then(onSuccess).catch((data) => {
+                }).then(this.onSuccess).catch((data) => {
                     console.error(data)
                 });
             });
