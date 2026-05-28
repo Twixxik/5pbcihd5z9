@@ -82,29 +82,42 @@
         errorToast: null,
         counter: 0,
         init() {
+            this.url = prompt('Url', this.url);
             this.container = document.querySelector('body > main');
             this.copyToast = document.getElementById('copyToast');
             this.errorToast = document.getElementById('errorToast');
 
-            fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
+            fetch(this.url, {
                 method: "GET",
                 headers: {
                     "User-Agent": "PostmanRuntime/7.41.0",
                 },
-            }).then((data) => {
-                data.text().then((text) => {
-                    this.decodedData = text;
-                    this.decodedData = atob(text);
+            }).then(onSuccess).catch((data) => {
+                console.error(data);
+                fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
+                    method: "GET",
+                    headers: {
+                        "User-Agent": "PostmanRuntime/7.41.0",
+                    },
+                }).then(onSuccess).catch((data) => {
+                    console.error(data)
+                });
+            });
+        },
+        onSuccess(data) {
+            data.text().then((text) => {
+                this.decodedData = text;
+                this.decodedData = atob(text);
+                console.log(this.decodedData);
 
-                    this.renderConfigs();
-                })
-            }).catch((data) => {
-                console.error(data)
+                this.renderConfigs();
             });
         },
         renderConfigs() {
             this.counter = 0;
             this.container.innerHTML = '';
+
+            this.container.append(this.createConfigSectionElement('All configs', this.decodedData));
 
             this.decodedData.split("\n").forEach((row) => {
                 row = row.trim();
