@@ -87,21 +87,30 @@
             this.copyToast = document.getElementById('copyToast');
             this.errorToast = document.getElementById('errorToast');
 
-            fetch(this.url, {
-                method: "GET",
-                headers: {
-                    "User-Agent": "PostmanRuntime/7.41.0",
-                },
-            }).then(this.onSuccess).catch((data) => {
-                console.error(data);
-                fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
+            this.fetchDirect();
+        },
+        fetchDirect() {
+            try {
+                fetch(this.url, {
                     method: "GET",
                     headers: {
                         "User-Agent": "PostmanRuntime/7.41.0",
                     },
                 }).then(this.onSuccess).catch((data) => {
-                    console.error(data)
-                });
+                    console.error(data);
+                }
+            } catch (e) {
+                this.fetchProxy();
+            } 
+        },
+        fetchProxy() {
+            fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(this.url), {
+                method: "GET",
+                headers: {
+                    "User-Agent": "PostmanRuntime/7.41.0",
+                },
+            }).then(this.onSuccess).catch((data) => {
+                console.error(data)
             });
         },
         onSuccess(data) {
