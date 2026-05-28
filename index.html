@@ -96,7 +96,7 @@
                     headers: {
                         "User-Agent": "PostmanRuntime/7.41.0",
                     },
-                }).then(this.onSuccess).catch((data) => {
+                }).then(this.onSuccess.bind(this)).catch((data) => {
                     console.error(data);
                 }
             } catch (e) {
@@ -109,7 +109,7 @@
                 headers: {
                     "User-Agent": "PostmanRuntime/7.41.0",
                 },
-            }).then(this.onSuccess).catch((data) => {
+            }).then(this.onSuccess.bind(this)).catch((data) => {
                 console.error(data)
             });
         },
