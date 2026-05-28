@@ -127,7 +127,7 @@
             this.counter = 0;
             this.container.innerHTML = '';
 
-            this.container.append(this.createConfigSectionElement('All configs', this.decodedData));
+            this.container.append(this.createConfigSectionElement('All configs', this.decodedData.replaceAll("\n", ',')));
 
             this.decodedData.split("\n").forEach((row) => {
                 row = row.trim();
